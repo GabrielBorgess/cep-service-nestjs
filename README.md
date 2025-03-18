@@ -42,7 +42,7 @@ URL: /cep/:cep
 #### Exemplo de Requisição
 
 ```http
-GET /cep/12345678
+GET http://localhost:3000/cep/01001000
 ```
 
 #### Exemplo de resposta
