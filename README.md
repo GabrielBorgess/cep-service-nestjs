@@ -10,8 +10,8 @@ O projeto segue os princípios SOLID para organização.
 
 1. Clone o repositório:
     ```sh
-    git clone <URL_DO_REPOSITORIO>
-    cd cep-service
+    git clone https://github.com/GabrielBorgess/cep-service-nestjs
+    cd cep-service-nestjs
     ```
 
 2. Instale as dependências:
