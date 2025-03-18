@@ -26,6 +26,11 @@ Para iniciar a aplicação, execute o seguinte comando:
 pnpm start
 ```
 
+Para iniciar os testes da aplicação, execute o seguinte comando:
+```sh
+pnpm test
+```
+
 A aplicação estará disponível em http://localhost:3000.
 
 ### Endpoints
