@@ -2,7 +2,7 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import axios from 'axios';
 
 
-//Serviço para buscar endereço por CEP, e retornar mensagem persolanizada
+//Serviço para buscar endereço por CEP
 @Injectable()
 export class CepService {
   private readonly baseUrl = 'https://viacep.com.br/ws';
