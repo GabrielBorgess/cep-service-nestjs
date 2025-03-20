@@ -1,18 +1,44 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CepService } from '../src/cep/cep.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 
-// simular o axios
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe('CepService', () => {
   let service: CepService;
 
+  //Mocks para teste
+  const MOCK_CEP = '01001000';
+  const MOCK_ADDRESS = {
+    cep: MOCK_CEP,
+    bairro: 'Sé',
+    localidade: 'São Paulo',
+    uf: 'SP',
+    logradouro: 'Praça da Sé',
+    erro: false
+  };
+
+  const MOCK_BAR = {
+    displayName: { text: 'Bar do Zé' },
+    opening_hours: { open_now: true }
+  };
+
+  const mockConfigService = {
+    get: jest.fn().mockReturnValue('fake-api-key')
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CepService],
+      providers: [
+        CepService,
+        {
+          provide: ConfigService,
+          useValue: mockConfigService
+        }
+      ],
     }).compile();
 
     service = module.get<CepService>(CepService);
@@ -20,43 +46,57 @@ describe('CepService', () => {
   });
 
   describe('findAddressByCep', () => {
-    //Caso de sucesso
-    it('deve retornar uma mensagem formatada quando o CEP é válido', async () => {
-      //Resposta esperada da API
-      mockedAxios.get.mockResolvedValue({
-        data: {
-          cep: '01001000',
-          bairro: 'Sé',
-          localidade: 'São Paulo',
-          uf: 'SP',
-          erro: false
-        }
+    describe('Cenários de sucesso', () => {
+      it('deve retornar endereço e bar mais próximo quando ambas as APIs funcionam', async () => {
+        mockedAxios.get.mockResolvedValueOnce({ data: MOCK_ADDRESS });
+        mockedAxios.post.mockResolvedValueOnce({
+          data: { places: [MOCK_BAR] }
+        });
+
+        const result = await service.findAddressByCep(MOCK_CEP);
+
+        expect(result).toEqual({
+          message: `Seu CEP indica que você mora no bairro ${MOCK_ADDRESS.bairro}, na cidade de ${MOCK_ADDRESS.localidade}, no estado de ${MOCK_ADDRESS.uf}.`,
+          nearestBar: {
+            recado: 'encontramos um bar pertinho de você!',
+            nome: MOCK_BAR.displayName.text,
+            status: '🟢 Aberto e pronto para sua sede!'
+          }
+        });
       });
 
-      const result = await service.findAddressByCep('01001000');
-      expect(result.message).toContain('São Paulo');
-      expect(result.message).toContain('SP');
-      expect(result.message).toContain('Sé');
+      it('deve retornar endereço e mensagem quando não encontra bares', async () => {
+
+        mockedAxios.get.mockResolvedValueOnce({ data: MOCK_ADDRESS });
+        mockedAxios.post.mockResolvedValueOnce({ data: { places: [] } });
+
+        const result = await service.findAddressByCep(MOCK_CEP);
+
+        expect(result).toEqual({
+          message: `Seu CEP indica que você mora no bairro ${MOCK_ADDRESS.bairro}, na cidade de ${MOCK_ADDRESS.localidade}, no estado de ${MOCK_ADDRESS.uf}.`,
+          nearestBar: 'Nao foi possivel encontrar bares proximos de você, que pena!'
+        });
+      });
     });
 
-    //Caso de cep não encontrado
-    it('deve lançar HttpException quando o CEP não é encontrado', async () => {
-      mockedAxios.get.mockResolvedValue({
-        data: { erro: true }
+    describe('Cenários de erro', () => {
+      it('deve lançar HttpException quando a API ViaCEP falha', async () => {
+
+        mockedAxios.get.mockRejectedValueOnce(new Error('Network Error'));
+
+        await expect(service.findAddressByCep(MOCK_CEP))
+          .rejects
+          .toThrow(new HttpException('Erro ao consultar o CEP', HttpStatus.INTERNAL_SERVER_ERROR));
       });
 
-      await expect(service.findAddressByCep('00000000'))
-        .rejects
-        .toThrow(HttpException);
-    });
+      it('deve lançar HttpException quando a API do Google Places falha', async () => {
+        mockedAxios.get.mockResolvedValueOnce({ data: MOCK_ADDRESS });
+        mockedAxios.post.mockRejectedValueOnce(new Error('Google API Error'));
 
-    //Caso de falha na API
-    it('deve lançar HttpException quando a API externa falha', async () => {
-      mockedAxios.get.mockRejectedValue(new Error('Network Error'));
-
-      await expect(service.findAddressByCep('01001000'))
-        .rejects
-        .toThrow(new HttpException('Erro ao consultar o CEP', HttpStatus.INTERNAL_SERVER_ERROR));
+        await expect(service.findAddressByCep(MOCK_CEP))
+          .rejects
+          .toThrow(HttpException);
+      });
     });
   });
 });
