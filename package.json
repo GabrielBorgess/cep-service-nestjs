@@ -6,6 +6,7 @@
     "test": "jest",
     "start": "ts-node src/main.ts",
     "start:dev": "nest start --watch",
+    "start:prod": "node dist/main.js",
     "build": "nest build",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage"
