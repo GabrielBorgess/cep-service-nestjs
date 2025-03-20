@@ -1,6 +1,9 @@
+# Recado importante ao rodrigo e equipe
+Subi o .env com minha chave API do GOOGLE de propósito, para fascilitar rodar a aplicação ai na hora, é apenas uma chave teste e sem custos, depois de avaliada, eu derrubo! 
+
 # CEP Service
 
-Este projeto é um serviço de API REST para buscar endereços a partir de um CEP (Código de Endereçamento Postal) utilizando o framework NestJS.
+Este projeto é um serviço de API REST para buscar endereços a partir de um CEP (Código de Endereçamento Postal) utilizando o framework NestJS, e a partir dele, retornar o bar mais próximo!
 
 ## Estrutura do Projeto
 
@@ -31,24 +34,32 @@ Para iniciar os testes da aplicação, execute o seguinte comando:
 pnpm test
 ```
 
-A aplicação estará disponível em http://localhost:3000.
+A aplicação estará disponível em [http://localhost:3000](http://localhost:3000).
 
-### Endpoints
-Buscar Endereço por CEP
+## Endpoints
 
-```sh 
+### Buscar Endereço por CEP
+
+```sh
 URL: /cep/:cep
 ```
+
 #### Exemplo de Requisição
 
 ```http
 GET http://localhost:3000/cep/01001000
 ```
 
-#### Exemplo de resposta
+#### Exemplo de Resposta
 
 ```json
 {
   "mensagem": "Seu CEP indica que você mora na cidade de São Paulo, que fica no estado de SP. Esta mensagem foi personalizada pela API."
 }
 ```
+
+Sim, nossa API não apenas retorna informações úteis, mas também faz você sorrir com mensagens personalizadas. Afinal, quem não gosta de um pouco de diversão enquanto trabalha?
+
+---
+
+Se precisar de mais ajustes ou quiser adicionar algo, é só avisar! 😄
