@@ -68,7 +68,7 @@ export class CepService {
 
       if (!placesResponse.data.places.length) {
         return{
-          messsage: 'Nao foi possivel encontrar bares proximos de você, que pena!'
+          message: 'Nao foi possivel encontrar bares proximos de você, que pena!'
         };
       }
 
