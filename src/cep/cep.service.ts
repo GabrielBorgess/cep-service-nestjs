@@ -15,8 +15,6 @@ export class CepService {
 
 
   async findAddressByCep(cep: string) {
-
-    console.log(`A CHAVE DA API: ${this.googleMapsApiKey}`)
     try {
       const formattedCep = cep.replace(/\D/g, '');
 
