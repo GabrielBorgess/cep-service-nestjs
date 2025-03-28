@@ -54,9 +54,3 @@ GET http://localhost:3000/cep/01001000
   "mensagem": "Seu CEP indica que você mora na cidade de São Paulo, que fica no estado de SP. Esta mensagem foi personalizada pela API."
 }
 ```
-
-Sim, nossa API não apenas retorna informações úteis, mas também faz você sorrir com mensagens personalizadas. Afinal, quem não gosta de um pouco de diversão enquanto trabalha?
-
----
-
-Se precisar de mais ajustes ou quiser adicionar algo, é só avisar! 😄
